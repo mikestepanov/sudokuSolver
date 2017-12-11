@@ -25,4 +25,8 @@ span {
   border: 1px solid red;
   flex: 1 33%;
   background-color: #aaccff;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
