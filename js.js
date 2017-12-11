@@ -11,7 +11,6 @@ Sudoku.prototype.setupBoard = function() {
     }
   }
 
-
   createBlocks();
 
   function getCorrectParentId(i, j) {
@@ -34,6 +33,23 @@ Sudoku.prototype.setupBoard = function() {
   }
 };
 
+Sudoku.prototype.board = function() {
+  var board = document.querySelectorAll('span');
+  var newBoard = [];
+  for (var i = 0; i < board.length; i++) {
+    var obj = {};
+    obj.name = `span.${board[i].classList[0]}.${board[i].classList[1]}`;
+    obj.vertical = board[i].classList[0];
+    obj.horizontal = board[i].classList[1];
+    obj.parentId = board[i].parentElement.id;
+    obj.value = board[i].firstChild.innerHTML;
+    obj.potential = [];
+    obj.potentialValue = '-';
+    newBoard.push(obj);
+  }
+  return newBoard;
+}
+
 Sudoku.prototype.renderNewBoard = function(board) {
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board.length; j++) {
@@ -41,7 +57,6 @@ Sudoku.prototype.renderNewBoard = function(board) {
     }
   }
 };
-
 
 Sudoku.prototype.checkCluster = function(n) {
   var arr = document.querySelectorAll(`#cluster${n} span p`);
@@ -55,7 +70,7 @@ Sudoku.prototype.checkCluster = function(n) {
     }
   }
   return true;
-}
+};
 
 Sudoku.prototype.checkRow = function(n) {
   var arr = document.querySelectorAll(`.h${n} p`);
@@ -69,7 +84,7 @@ Sudoku.prototype.checkRow = function(n) {
     }
   }
   return true;
-}
+};
 
 Sudoku.prototype.checkCol = function(n) {
   var arr = document.querySelectorAll(`.v${n} p`);
@@ -83,7 +98,20 @@ Sudoku.prototype.checkCol = function(n) {
     }
   }
   return true;
+};
+
+Sudoku.prototype.getPotential = function(board) {
+  for (var i = 0; i < board.length; i++) {
+
+  }
 }
+
+Sudoku.prototype.getAnti = function() {
+  var board = this.board();
+  console.log(board);
+  var board = this.getPotential(board);
+  console.log(board);
+};
 
 var board = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 ['-', '-', 3, 6, '-', '-', '-', '-', '-'],
@@ -97,3 +125,5 @@ var board = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 
 var mySudoku = new Sudoku();
 mySudoku.renderNewBoard(board);
+
+mySudoku.getAnti();
