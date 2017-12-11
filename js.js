@@ -1,34 +1,49 @@
-function createBlocks() {
+var Sudoku = function() {
+  this.setupBoard();
+}
+
+Sudoku.prototype.setupBoard = function() {
+  function createBlocks() {
+    for (var i = 0; i < 9; i++) {
+      var div = document.createElement('div');
+      div.setAttribute('id', `cluster${i}`);
+      $('#sudoku').append(div);
+    }
+  }
+
+
+  createBlocks();
+
+  function getCorrectParentId(i, j) {
+    var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
+    var num = i * 9 + j;
+    var line = arr[Math.floor(num / 27)]
+    num = num % 9;
+    return line[Math.floor(num / 3)];
+  }
+
   for (var i = 0; i < 9; i++) {
-    var div = document.createElement('div');
-    div.setAttribute('id', `cluster${i}`);
-    $('#sudoku').append(div);
+    for (var j = 0; j < 9; j++) {
+      var span = document.createElement('span');
+      span.classList.add('v' + i);
+      span.classList.add('h' + j);
+      var id = getCorrectParentId(i, j);
+      span.innerHTML = `<p>-</p>`;
+      $(`#cluster${id}`).append(span);
+    }
   }
-}
+};
 
-
-createBlocks();
-
-function getCorrectParentId(i, j) {
-  var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
-  var num = i * 9 + j;
-  var line = arr[Math.floor(num / 27)]
-  num = num % 9;
-  return line[Math.floor(num / 3)];
-}
-
-for (var i = 0; i < 9; i++) {
-  for (var j = 0; j < 9; j++) {
-    var span = document.createElement('span');
-    span.classList.add('v' + i);
-    span.classList.add('h' + j);
-    var id = getCorrectParentId(i, j);
-    span.innerHTML = `<p>-</p>`;
-    $(`#cluster${id}`).append(span);
+Sudoku.prototype.renderNewBoard = function(board) {
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board.length; j++) {
+      $(`span.v${i}.h${j} p`).html(board[i][j]);
+    }
   }
-}
+};
 
-function checkCluster(n) {
+
+Sudoku.prototype.checkCluster = function(n) {
   var arr = document.querySelectorAll(`#cluster${n} span p`);
   var holdArr = [];
   for (var i = 0; i < arr.length; i++) {
@@ -42,7 +57,7 @@ function checkCluster(n) {
   return true;
 }
 
-function checkRow(n) {
+Sudoku.prototype.checkRow = function(n) {
   var arr = document.querySelectorAll(`.h${n} p`);
   var holdArr = [];
   for (var i = 0; i < arr.length; i++) {
@@ -56,7 +71,7 @@ function checkRow(n) {
   return true;
 }
 
-function checkCol(n) {
+Sudoku.prototype.checkCol = function(n) {
   var arr = document.querySelectorAll(`.v${n} p`);
   var holdArr = [];
   for (var i = 0; i < arr.length; i++) {
@@ -70,15 +85,6 @@ function checkCol(n) {
   return true;
 }
 
-function sudoku(board) {
-  for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board.length; j++) {
-      console.log(i, j);
-      $(`span.v${i}.h${j} p`).html(board[i][j]);
-    }
-  }
-}
-
 var board = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 ['-', '-', 3, 6, '-', '-', '-', '-', '-'],
 ['-', 7, '-', '-', 9, '-', 2, '-', '-'],
@@ -89,5 +95,5 @@ var board = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 ['-', '-', 8, 5, '-', '-', '-', 1, '-'],
 ['-', 9, '-', '-', '-', '-', 4, '-', '-']];
 
-//
-var sudoku = sudoku(board);
+var mySudoku = new Sudoku();
+mySudoku.renderNewBoard(board);
