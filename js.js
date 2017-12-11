@@ -59,6 +59,11 @@ Sudoku.prototype.renderNewBoard = function(board) {
 };
 
 Sudoku.prototype.getPotentialCluster = function(potential, el) {
+  var spans = el.parent.children;
+  potential.slice(potential.indexOf(el), 1);
+  for (var i = 0; i < spans.length; i++) {
+
+  }
   console.log(el.parent.children);
 };
 
@@ -117,7 +122,7 @@ Sudoku.prototype.getPotential = function(board) {
   for (var i = 0; i < board.length; i++) {
     var el = board[i];
     if (el.value !== '-') {
-      var potential = [0,1,2,3,4,5,6,7,8];
+      var potential = ['0','1','2','3','4','5','6','7','8'];
       var potential = this.getPotentialCluster(potential, el);
       var potential = this.getPotentialRow(potential, el);
       var potential = this.getPotentialCol(potential, el);
