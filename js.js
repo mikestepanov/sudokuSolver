@@ -41,7 +41,7 @@ Sudoku.prototype.board = function() {
     obj.name = `span.${board[i].classList[0]}.${board[i].classList[1]}`;
     obj.vertical = board[i].classList[0];
     obj.horizontal = board[i].classList[1];
-    obj.parentId = board[i].parentElement.id;
+    obj.parent = board[i].parentElement;
     obj.value = board[i].firstChild.innerHTML;
     obj.potential = [];
     obj.potentialValue = '-';
@@ -57,6 +57,19 @@ Sudoku.prototype.renderNewBoard = function(board) {
     }
   }
 };
+
+Sudoku.prototype.getPotentialCluster = function(potential, el) {
+  console.log(el.parent.children);
+};
+
+Sudoku.prototype.getPotentialRow = function(potential, el) {
+  console.log(el.parent.children);
+};
+
+Sudoku.prototype.getPotentialCol = function(potential, el) {
+  console.log(el.parent.children);
+};
+
 
 Sudoku.prototype.checkCluster = function(n) {
   var arr = document.querySelectorAll(`#cluster${n} span p`);
@@ -102,8 +115,16 @@ Sudoku.prototype.checkCol = function(n) {
 
 Sudoku.prototype.getPotential = function(board) {
   for (var i = 0; i < board.length; i++) {
-
+    var el = board[i];
+    if (el.value !== '-') {
+      var potential = [0,1,2,3,4,5,6,7,8];
+      var potential = this.getPotentialCluster(potential, el);
+      var potential = this.getPotentialRow(potential, el);
+      var potential = this.getPotentialCol(potential, el);
+      el.potential = potential;
+    }
   }
+  return board;
 }
 
 Sudoku.prototype.getAnti = function() {
