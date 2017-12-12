@@ -1,3 +1,35 @@
+var Element = Backbone.module.extend({
+  initialize: function(origin, cluster, horizontal, vertical, value, potentials, potentialValue, potentialId, bg) {
+    this.set('origin', origin);
+    this.set('cluster', cluster);
+    this.set('horizontal', horizontal);
+    this.set('vertical', vertical);
+    // this.set('value', value);
+    this.set('potentials', potentials);
+    this.set('potentialValue', potentialValue);
+    this.set('potentialId', potentialId);
+    this.set('bg', bg);
+  },
+  rotate: function() {
+    var pos = this.get('potentialId');
+    pos++;
+    var arr = this.get('potentials');
+    if (!arr[pos]) {
+      return null;
+      this.set('pos', 0);
+    } else {
+      this.set('potentialId', pos);
+      this.set('potentialValue', arr[pos]);
+      return arr[pos];
+    }
+  }
+});
+
+
+
+
+
+
 var Sudoku = function() {
   this.setupBoard();
 }
@@ -156,7 +188,7 @@ Sudoku.prototype.getPotential = function(board) {
 Sudoku.prototype.davai = function() {
   var board = this.board();
   for(var i = 0; i < this.board; i++) {
-    
+
   }
 }
 
