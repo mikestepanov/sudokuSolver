@@ -107,18 +107,7 @@ Sudoku.prototype.getPotential = function() {
 
 Sudoku.prototype.getPotentialCluster = function(potential, el) {
   var board = this.board;
-  var cluster = []
-  var headPos = headClusterPos(el);
-  cluster.push(board[headPos[0]][headPos[1]]);
-  cluster.push(board[headPos[0]][headPos[1] + 1]);
-  cluster.push(board[headPos[0]][headPos[1] + 2]);
-  cluster.push(board[headPos[0] + 1][headPos[1]]);
-  cluster.push(board[headPos[0] + 1][headPos[1] + 1]);
-  cluster.push(board[headPos[0] + 1][headPos[1] + 2]);
-  cluster.push(board[headPos[0] + 2][headPos[1]]);
-  cluster.push(board[headPos[0] + 2][headPos[1] + 1]);
-  cluster.push(board[headPos[0] + 2][headPos[1] + 2]);
-
+  var cluster = this.getCluster(el);
   for (var i = 0; i < cluster.length; i++) {
     var val = cluster[i].origin;
     var idx = potential.indexOf(val);
@@ -131,9 +120,9 @@ Sudoku.prototype.getPotentialCluster = function(potential, el) {
 
 
 Sudoku.prototype.getPotentialCol = function(potential, el, n) {
-  var board = this.board;
-  for (var i = 0; i < board.length; i++) {
-    var val = board[i][n].origin;
+  var col = this.getCol(n);
+  for (var i = 0; i < col.length; i++) {
+    var val = col[i].origin;
     var idx = potential.indexOf(val);
     if (idx !== -1)
       potential.splice(idx, 1);
@@ -142,7 +131,7 @@ Sudoku.prototype.getPotentialCol = function(potential, el, n) {
 };
 
 Sudoku.prototype.getPotentialRow = function(potential, el, n) {
-  var row = this.board[n];
+  var row = this.getRow(n);
   for (var i = 0; i < row.length; i++) {
     var val = row[i].origin;
     var idx = potential.indexOf(val);
@@ -150,6 +139,31 @@ Sudoku.prototype.getPotentialRow = function(potential, el, n) {
       potential.splice(idx, 1);
     }
   return potential;
+};
+
+Sudoku.prototype.getRow = function(v) {
+  return this.board[v];
+};
+
+Sudoku.prototype.getCol = function(h) {
+  var board = this.board;
+  var col = [];
+  for (var v = 0; v < board.length; v++) {
+    col.push(board[v][h]);
+  }
+  return col;
+};
+
+Sudoku.prototype.getCluster = function(obj) {
+  var pos = headClusterPos(obj);
+  var board = this.board;
+  var cluster = [];
+  for (var v = 0; v < 3; v++) {
+    for (var h = 0; h < 3; h++) {
+      cluster.push(board[pos[0] + v][pos[1] + h]);
+    }
+  }
+  return cluster;
 };
 
 var board1 = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -173,8 +187,6 @@ var board1 = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 // ['-', '-', '-', 6, '-', 7, '-', '-', '-']];
 
 var mySudoku = new Sudoku(board1);
-// console.log(mySudoku.board);
-mySudoku.getPotential();
 // console.log(mySudoku.board);
 
 
