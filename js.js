@@ -1,92 +1,79 @@
-var Element = Backbone.module.extend({
-  initialize: function(origin, cluster, horizontal, vertical, value, potentials, potentialValue, potentialId, bg) {
-    this.set('origin', origin);
-    this.set('cluster', cluster);
-    this.set('horizontal', horizontal);
-    this.set('vertical', vertical);
+var Element = function(id, origin, cluster, horizontal, vertical) {
+    this.id =  id)
+    this.origin = origin;
+    this.cluster = cluster;
+    this.horizontal = horizontal;
+    this.vertical = vertical;
     // this.set('value', value);
-    this.set('potentials', potentials);
-    this.set('potentialValue', potentialValue);
-    this.set('potentialId', potentialId);
-    this.set('bg', bg);
-  },
-  rotate: function() {
-    var pos = this.get('potentialId');
-    pos++;
-    var arr = this.get('potentials');
-    if (!arr[pos]) {
-      return null;
-      this.set('pos', 0);
-    } else {
-      this.set('potentialId', pos);
-      this.set('potentialValue', arr[pos]);
-      return arr[pos];
-    }
+    // this.set('potentials', potentials);
+    // this.set('potentialValue', potentialValue);
+    // this.set('potentialId', potentialId);
+    // this.set('bg', bg);
+  };
+
+Element.prototype.rotate: function() {
+  var pos = this.potentialId;
+  pos++;
+  var arr = this.potentials;
+  if (!arr[pos]) {
+    return null;
+    this.potentialId = 0;
+  } else {
+    this.potentialId = pos;
+    this.potentialValue =  arr[pos];
+    return arr[pos];
   }
-});
+};
 
 
 
-
-
-
-var Sudoku = function() {
-  this.setupBoard();
+var Sudoku = function(board) {
+  this.setupClusters();
+  this.backboneBoard = [];
+  this.setupInBoard(board);
+  this.setupDomBoard();
 }
 
-Sudoku.prototype.setupBoard = function() {
-  function createBlocks() {
-    for (var i = 0; i < 9; i++) {
-      var div = document.createElement('div');
-      div.setAttribute('id', `cluster${i}`);
-      $('#sudoku').append(div);
-    }
+Sudoku.prototype.setupClusters = function() {
+  for (var i = 0; i < 9; i++) {
+    var div = document.createElement('div');
+    div.setAttribute('id', `cluster${i}`);
+    $('#sudoku').append(div);
   }
+};
 
-  createBlocks();
-
-  function getCorrectParentId(i, j) {
-    var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
-    var num = i * 9 + j;
-    var line = arr[Math.floor(num / 27)]
-    num = num % 9;
-    return line[Math.floor(num / 3)];
+Sudoku.prototype.setupInBoard = function(board) {
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board.length; j++) {
+      var id = i * 9 + j;
+      var origin = board[i, j];
+      var cluster = getCorrectParentId(i, j)
+      var horizontal = j;
+      var vertical = i;
+      var el = new Element(id, origin, cluster, horizontal, vertical);
+      backboneBoard[el];
   }
+}
 
+Sudoku.prototype.setupBoard = function(board) {
   for (var i = 0; i < 9; i++) {
     for (var j = 0; j < 9; j++) {
       var span = document.createElement('span');
       span.classList.add('v' + i);
       span.classList.add('h' + j);
       var id = getCorrectParentId(i, j);
-      span.innerHTML = `<p>-</p>`;
+      var value = board[i][j];
+      span.innerHTML = `<p>${value}</p>`;
       $(`#cluster${id}`).append(span);
-    }
-  }
-};
 
-Sudoku.prototype.board = function() {
-  var board = document.querySelectorAll('span');
-  var newBoard = [];
-  for (var i = 0; i < board.length; i++) {
-    var obj = {};
-    obj.name = `span.${board[i].classList[0]}.${board[i].classList[1]}`;
-    obj.vertical = board[i].classList[0].slice(1);
-    obj.horizontal = board[i].classList[1].slice(1);
-    obj.parentId = board[i].parentElement.id;
-    obj.value = board[i].firstChild.innerHTML;
-    obj.potential = [];
-    obj.potentialId = 0;
-    obj.potentialValue = '-';
-    newBoard.push(obj);
-  }
-  return newBoard;
-}
 
-Sudoku.prototype.renderNewBoard = function(board) {
-  for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board.length; j++) {
-      $(`span.v${i}.h${j} p`).html(board[i][j]);
+
+
+
+
+      var elId = i * 9 + j;
+      var backbone = new Element(elId, value, id, j, i, value, potentials, value, potentialId, 'lighblue');
+      this.backboneBoard.push(backbone);
     }
   }
 };
@@ -224,3 +211,15 @@ $('span').on('click', function(event) {
   console.log(mySudoku.getAnti()[y].potential);
   console.log(y);
 });
+
+function id(i, j) {
+  return 9 * i + j;
+}
+
+function getCorrectParentId(i, j) {
+  var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
+  var num = i * 9 + j;
+  var line = arr[Math.floor(num / 27)]
+  num = num % 9;
+  return line[Math.floor(num / 3)];
+}
