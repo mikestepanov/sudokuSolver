@@ -44,6 +44,7 @@ Sudoku.prototype.board = function() {
     obj.parentId = board[i].parentElement.id;
     obj.value = board[i].firstChild.innerHTML;
     obj.potential = [];
+    obj.potentialId = 0;
     obj.potentialValue = '-';
     newBoard.push(obj);
   }
@@ -150,6 +151,13 @@ Sudoku.prototype.getPotential = function(board) {
     }
   }
   return arr;
+};
+
+Sudoku.prototype.davai = function() {
+  var board = this.board();
+  for(var i = 0; i < this.board; i++) {
+    
+  }
 }
 
 Sudoku.prototype.getAnti = function() {
