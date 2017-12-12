@@ -1,17 +1,16 @@
 var Element = function(id, origin, cluster, horizontal, vertical) {
-    this.id =  id)
+    this.id =  id;
     this.origin = origin;
     this.cluster = cluster;
     this.horizontal = horizontal;
     this.vertical = vertical;
-    // this.set('value', value);
-    // this.set('potentials', potentials);
-    // this.set('potentialValue', potentialValue);
-    // this.set('potentialId', potentialId);
-    // this.set('bg', bg);
+    this.potentials = [];
+    this.potentialValue;
+    this.potentialId = 0;
+    // this.bg = bg;
   };
 
-Element.prototype.rotate: function() {
+Element.prototype.rotate = function() {
   var pos = this.potentialId;
   pos++;
   var arr = this.potentials;
@@ -29,9 +28,10 @@ Element.prototype.rotate: function() {
 
 var Sudoku = function(board) {
   this.setupClusters();
-  this.backboneBoard = [];
-  this.setupInBoard(board);
-  this.setupDomBoard();
+  this.board = this.setupInBoard(board);
+  this.setupDomBoard(board);
+
+  this.getPotential();
 }
 
 Sudoku.prototype.setupClusters = function() {
@@ -43,19 +43,24 @@ Sudoku.prototype.setupClusters = function() {
 };
 
 Sudoku.prototype.setupInBoard = function(board) {
+  var newBoard = [];
   for (var i = 0; i < board.length; i++) {
+    var row = []
     for (var j = 0; j < board.length; j++) {
-      var id = i * 9 + j;
+      var id = getId(i, j);
       var origin = board[i, j];
-      var cluster = getCorrectParentId(i, j)
+      var cluster = getCorrectParentId(i, j);
       var horizontal = j;
       var vertical = i;
       var el = new Element(id, origin, cluster, horizontal, vertical);
-      backboneBoard[el];
+      row.push(el);
+    }
+    newBoard.push(row);
   }
+  return newBoard;
 }
 
-Sudoku.prototype.setupBoard = function(board) {
+Sudoku.prototype.setupDomBoard = function(board) {
   for (var i = 0; i < 9; i++) {
     for (var j = 0; j < 9; j++) {
       var span = document.createElement('span');
@@ -65,51 +70,68 @@ Sudoku.prototype.setupBoard = function(board) {
       var value = board[i][j];
       span.innerHTML = `<p>${value}</p>`;
       $(`#cluster${id}`).append(span);
+    }
+  }
+};
 
 
 
 
 
 
-      var elId = i * 9 + j;
-      var backbone = new Element(elId, value, id, j, i, value, potentials, value, potentialId, 'lighblue');
-      this.backboneBoard.push(backbone);
+Sudoku.prototype.getPotential = function() {
+  for (var i = 0; i < board.length; i++) {
+    for(var j = 0; j < board.length; j++) {
+      var el = board[i][j];
+      if (el.origin === '-') {
+        var potentials = ['0','1','2','3','4','5','6','7','8'];
+        var potentials = this.getPotentialCluster(potentials, el);
+        var potentials = this.getPotentialRow(potentials, el, j);
+        var potentials = this.getPotentialCol(potentials, el, i);
+        if (potentials.length === 1) {
+          el.origin = potentials[0];
+          $(`span.v${i}.h${j} p`).html(el.origin);
+          $(`span.v${i}.h${j} p`).css('background', 'blue');
+        }
+      }
     }
   }
 };
 
 Sudoku.prototype.getPotentialCluster = function(potential, el) {
-  var board = this.board();
+  var board = this.board;
+  var all = []
   for (var i = 0; i < board.length; i++) {
-    if (board[i].parentId === el.parentId) {
-      if (potential.indexOf(board[i].value) !== -1)
-        potential.splice(potential.indexOf(board[i].value), 1);
-      }
+    for (var j = 0; j < board.length; j++) {
+      var el = board[i][j];
+    }
+  }
+  return potential;
+};
+
+
+Sudoku.prototype.getPotentialCol = function(potential, el, n) {
+  var board = this.board;
+  for (var i = 0; i < board.length; i++) {
+    var val = board[i][n];
+    var idx = potential.indexOf(val);
+    if (idx !== -1)
+      potential.splice(idx, 1);
     }
   return potential;
 };
 
-Sudoku.prototype.getPotentialRow = function(potential, el) {
-  var board = this.board();
-  for (var i = 0; i < board.length; i++) {
-    if (board[i].horizontal === el.horizontal) {
-      if (potential.indexOf(board[i].value) !== -1)
-        potential.splice(potential.indexOf(board[i].value), 1);
-      }
+Sudoku.prototype.getPotentialRow = function(potential, el, n) {
+  var row = this.board[n];
+  for (var i = 0; i < row.length; i++) {
+    var val = row[i].origin;
+    var idx = potential.indexOf(val);
+    if (idx !== -1)
+      potential.splice(idx, 1);
     }
   return potential;
 };
 
-Sudoku.prototype.getPotentialCol = function(potential, el) {
-  var board = this.board();
-  for (var i = 0; i < board.length; i++) {
-    if (board[i].vertical === el.vertical) {
-      if (potential.indexOf(board[i].value) !== -1)
-        potential.splice(potential.indexOf(board[i].value), 1);
-      }
-    }
-  return potential;
-};
 
 
 Sudoku.prototype.checkCluster = function(n) {
@@ -154,23 +176,6 @@ Sudoku.prototype.checkCol = function(n) {
   return true;
 };
 
-Sudoku.prototype.getPotential = function(board) {
-  var arr = [];
-  for (var i = 0; i < board.length; i++) {
-    var el = board[i];
-    if (el.value === '-') {
-      var potential = ['0','1','2','3','4','5','6','7','8'];
-      var potential = this.getPotentialCluster(potential, el);
-      var potential = this.getPotentialRow(potential, el);
-      var potential = this.getPotentialCol(potential, el);
-      el.potential = potential;
-      arr.push(el);
-    } else {
-      arr.push(el);
-    }
-  }
-  return arr;
-};
 
 Sudoku.prototype.davai = function() {
   var board = this.board();
@@ -195,10 +200,7 @@ var board = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
 ['-', '-', 8, 5, '-', '-', '-', 1, '-'],
 ['-', 9, '-', '-', '-', '-', 4, '-', '-']];
 
-var mySudoku = new Sudoku();
-mySudoku.renderNewBoard(board);
-
-mySudoku.getAnti();
+var mySudoku = new Sudoku(board);
 
 
 $('span').on('click', function(event) {
@@ -212,13 +214,13 @@ $('span').on('click', function(event) {
   console.log(y);
 });
 
-function id(i, j) {
+function getId(i, j) {
   return 9 * i + j;
 }
 
 function getCorrectParentId(i, j) {
   var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
-  var num = i * 9 + j;
+  var num = getId(i, j);
   var line = arr[Math.floor(num / 27)]
   num = num % 9;
   return line[Math.floor(num / 3)];
