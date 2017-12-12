@@ -32,7 +32,6 @@ var Sudoku = function(board) {
 
   this.getPotential();
 
-  this.ascendAll();
 }
 
 Sudoku.prototype.setupClusters = function() {
@@ -154,7 +153,6 @@ Sudoku.prototype.ascendAll = function() {
 Sudoku.prototype.ascend = function(obj) {
   obj.origin = obj.potentials[0];
   $(`span.v${obj.vertical}.h${obj.horizontal} p`).html(obj.origin);
-  $(`span.v${obj.vertical}.h${obj.horizontal}`).css('background', 'red');
   this.clearAscendance(obj);
 };
 
@@ -198,15 +196,15 @@ Sudoku.prototype.getCluster = function(obj) {
   return cluster;
 };
 
-var board1 = [[8, '-', '-', '-', '-', '-', '-', '-', '-'],
-['-', '-', 3, 6, '-', '-', '-', '-', '-'],
-['-', 7, '-', '-', 9, '-', 2, '-', '-'],
-['-', 5, '-', '-', '-', 7, '-', '-', '-'],
-['-', '-', '-', '-', 4, 5, 7, '-', '-'],
-['-', '-', '-', 1, '-', '-', '-', 3, '-'],
-['-', '-', 1, '-', '-', '-', '-', 6, 8],
-['-', '-', 8, 5, '-', '-', '-', 1, '-'],
-['-', 9, '-', '-', '-', '-', 4, '-', '-']];
+var hardBoard = [[8,'-','-','-','-','-','-','-','-'],
+['-','-',3,6,'-','-','-','-','-'],
+['-',7,'-','-',9,'-',2,'-','-'],
+['-',5,'-','-','-',7,'-','-','-'],
+['-','-','-','-',4,5,7,'-','-'],
+['-','-','-',1,'-','-','-',3,'-'],
+['-','-',1,'-','-','-','-',6,8],
+['-','-',8,5,'-','-','-',1,'-'],
+['-',9,'-','-','-','-',4,'-','-']];
 
 var humanableBoard = [[1,'-','-',4,8,9,'-','-',6],
 [7,3,'-','-','-','-','-',4,'-'],
@@ -218,7 +216,7 @@ var humanableBoard = [[1,'-','-',4,8,9,'-','-',6],
 ['-',2,'-','-','-','-','-',3,7],
 [8,'-','-',5,1,2,'-','-',4],];
 
-var mySudoku = new Sudoku(humanableBoard);
+var mySudoku = new Sudoku(hardBoard);
 
 $('span').on('click', function(event) {
   var el = event.target;
@@ -247,3 +245,7 @@ function getCorrectParentId(i, j) {
   num = num % 9;
   return line[Math.floor(num / 3)];
 }
+
+$('#ascendAll').on('click', function() {
+  mySudoku.ascendAll();
+});
