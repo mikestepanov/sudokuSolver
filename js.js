@@ -171,6 +171,13 @@ Sudoku.prototype.clearAscendance = function(obj) {
   }
 };
 
+Sudoku.prototype.bruteForce = function() {
+  var board = this.board;
+  for(var i = 0; i < board.length ** 2; i++) {
+
+  }
+};
+
 Sudoku.prototype.getRow = function(v) {
   return this.board[v];
 };
@@ -216,7 +223,7 @@ var humanableBoard = [[1,'-','-',4,8,9,'-','-',6],
 ['-',2,'-','-','-','-','-',3,7],
 [8,'-','-',5,1,2,'-','-',4],];
 
-var mySudoku = new Sudoku(hardBoard);
+var mySudoku = new Sudoku(humanableBoard);
 
 $('span').on('click', function(event) {
   var el = event.target;
@@ -248,4 +255,8 @@ function getCorrectParentId(i, j) {
 
 $('#ascendAll').on('click', function() {
   mySudoku.ascendAll();
+});
+
+$('#bruteForce').on('click', function() {
+  mySudoku.bruteForce();
 });
