@@ -5,9 +5,8 @@ var Element = function(id, origin, cluster, horizontal, vertical) {
     this.horizontal = horizontal;
     this.vertical = vertical;
     this.potentials = [];
-    this.potentialValue;
+    this.value = origin;
     this.potentialId = 0;
-    // this.bg = bg;
   };
 
 Element.prototype.rotate = function() {
@@ -19,28 +18,20 @@ Element.prototype.rotate = function() {
     this.potentialId = 0;
   } else {
     this.potentialId = pos;
-    this.potentialValue =  arr[pos];
+    this.value =  arr[pos];
     return arr[pos];
   }
 };
 
 
 var Sudoku = function(board) {
-  this.setupClusters();
+
   this.board = this.setupInBoard(board);
   this.setupDomBoard(board);
 
   this.getPotential();
-
+  this.headPotential = [0, 0];
 }
-
-Sudoku.prototype.setupClusters = function() {
-  for (var i = 0; i < 9; i++) {
-    var div = document.createElement('div');
-    div.setAttribute('id', `cluster${i}`);
-    $('#sudoku').append(div);
-  }
-};
 
 Sudoku.prototype.setupInBoard = function(board) {
   var newBoard = [];
@@ -130,6 +121,7 @@ Sudoku.prototype.getPotentialRow = function(potential, el, v) {
 
 
 Sudoku.prototype.ascendAll = function() {
+  console.log(55);
   var board = this.board;
   var canAscend = [];
   var ascended;
@@ -144,6 +136,7 @@ Sudoku.prototype.ascendAll = function() {
   }
   for (var i = 0; i < canAscend.length; i++) {
     this.ascend(canAscend[i]);
+    console.log(i);
   }
   if (ascended) {
     this.ascendAll();
@@ -165,18 +158,40 @@ Sudoku.prototype.clearAscendance = function(obj) {
   for (var i = 0; i < arr.length; i++) {
     var el = arr[i];
     var idx = el.potentials.indexOf(obj.origin);
-    if(idx !== -1) {
+    if (idx !== -1) {
       el.potentials.splice(idx, 1);
     }
   }
 };
 
-Sudoku.prototype.bruteForce = function() {
-  var board = this.board;
-  for(var i = 0; i < board.length ** 2; i++) {
+// Sudoku.prototype.bruteForce = function() {
+//   var board = this.board;
+//   for (var i = 0; i < board.length; i++) {
+//     for (var j = 0; j < board.length; j++) {
+//       var el = board[i][j];
+//       if (el.origin === '-') {
+//         if(this.value === '-') {
+//           this.value = this.potentials[0];
+//         }
+//         var ans = bruteCell(i, j);
+//       }
+//     }
+//   }
+// };
+//
+// Sudoku.prototype.bruteCell = function(i, j) {
+//   var cell = this.board[i][j];
+//   if (allClear(i, j)) {
+//
+//   }
+// };
 
-  }
-};
+Sudoku.prototype.getParty = function(obj) {
+  var arrWithDups = [];
+  var row = getRow(obj.vertical);
+  var col = getCol(obj.horizontal);
+  var cluster = getCluster(obj);
+}
 
 Sudoku.prototype.getRow = function(v) {
   return this.board[v];
@@ -213,17 +228,6 @@ var hardBoard = [[8,'-','-','-','-','-','-','-','-'],
 ['-','-',8,5,'-','-','-',1,'-'],
 ['-',9,'-','-','-','-',4,'-','-']];
 
-var humanableBoard = [[1,'-','-',4,8,9,'-','-',6],
-[7,3,'-','-','-','-','-',4,'-'],
-['-','-','-','-','-',1,2,9,5],
-['-','-',7,1,2,'-',6,'-','-'],
-[5,'-','-',7,'-',3,'-','-',8],
-['-','-',6,'-',9,5,7,'-','-'],
-[9,1,4,6,'-','-','-','-','-'],
-['-',2,'-','-','-','-','-',3,7],
-[8,'-','-',5,1,2,'-','-',4],];
-
-var mySudoku = new Sudoku(humanableBoard);
 
 $('span').on('click', function(event) {
   var el = event.target;
@@ -248,7 +252,7 @@ function getId(i, j) {
 function getCorrectParentId(i, j) {
   var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
   var num = getId(i, j);
-  var line = arr[Math.floor(num / 27)]
+  var line = arr[Math.floor(num / 27)];
   num = num % 9;
   return line[Math.floor(num / 3)];
 }
@@ -257,6 +261,6 @@ $('#ascendAll').on('click', function() {
   mySudoku.ascendAll();
 });
 
-$('#bruteForce').on('click', function() {
-  mySudoku.bruteForce();
-});
+// $('#bruteForce').on('click', function() {
+//   mySudoku.bruteForce();
+// });
