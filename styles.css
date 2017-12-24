@@ -8,17 +8,18 @@
   width: 40%;
   height: 40%;
   position: absolute;
-  /* top: 40%;
-  left: 40%; */
+  top: 33%;
+  left: 33%;
   background: none;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1em;
+  background: AliceBlue;
 }
 
 #sudoku > div {
   border: 1px solid yellow;
-  background-color: #99ccff;
+  background-color: BlanchedAlmond;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1em;

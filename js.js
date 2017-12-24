@@ -33,38 +33,6 @@ var Sudoku = function(board) {
   this.headPotential = [0, 0];
 }
 
-Sudoku.prototype.setupInBoard = function(board) {
-  var newBoard = [];
-  for (var i = 0; i < board.length; i++) {
-    var row = []
-    for (var j = 0; j < board.length; j++) {
-      var id = getId(i, j);
-      var origin = board[i][j];
-      var cluster = getCorrectParentId(i, j);
-      var horizontal = j;
-      var vertical = i;
-      var el = new Element(id, origin, cluster, horizontal, vertical);
-      row.push(el);
-    }
-    newBoard.push(row);
-  }
-  return newBoard;
-}
-
-Sudoku.prototype.setupDomBoard = function(board) {
-  for (var i = 0; i < 9; i++) {
-    for (var j = 0; j < 9; j++) {
-      var span = document.createElement('span');
-      span.classList.add('v' + i);
-      span.classList.add('h' + j);
-      var id = getCorrectParentId(i, j);
-      var value = board[i][j];
-      span.innerHTML = `<p>${value}</p>`;
-      $(`#cluster${id}`).append(span);
-    }
-  }
-};
-
 
 Sudoku.prototype.getPotential = function() {
   var changed;
@@ -245,17 +213,6 @@ function headClusterPos(obj) {
   return [v, h];
 }
 
-function getId(i, j) {
-  return 9 * i + j;
-}
-
-function getCorrectParentId(i, j) {
-  var arr = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
-  var num = getId(i, j);
-  var line = arr[Math.floor(num / 27)];
-  num = num % 9;
-  return line[Math.floor(num / 3)];
-}
 
 $('#ascendAll').on('click', function() {
   mySudoku.ascendAll();
