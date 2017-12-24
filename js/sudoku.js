@@ -1,9 +1,11 @@
 var Sudoku = function(board) {
+  this.foundPotentials = false;
+  this.ascended = false;
   this.initialize(board);
+  this.getPotentials();
 };
 
 // start INITIALIZE THE BOARD
-
 Sudoku.prototype.initialize = function(board) {
   if (Math.sqrt(board.length) % 1 === 0) {
     this.setupBoard(board);
@@ -14,7 +16,6 @@ Sudoku.prototype.initialize = function(board) {
 
 Sudoku.prototype.setupBoard = function(board) {
   this.clusterMap = this.setupClusters(board.length);
-  console.log(this.clusterMap);
   this.board = this.setupInBoard(board, this);
   this.setupDomBoard(board);
 };
@@ -70,8 +71,106 @@ Sudoku.prototype.setupDomBoard = function(board) {
 // end INITIALIZE THE BOARD
 
 // start GET POTENTIALS
+Sudoku.prototype.getPotentials = function() {
+  var board = this.board;
+  for (var i = 0; i < board.length; i++) {
+    for(var j = 0; j < board.length; j++) {
+      var el = board[i][j];
+      if (el.origin === '-') {
+        var potentials = [1,2,3,4,5,6,7,8,9];
+        var potentials = this.filterPotentialCluster(potentials, el);
+        var potentials = this.filterPotentialRow(potentials, el, i);
+        var potentials = this.filterPotentialCol(potentials, el, j);
+        el.potentials = potentials;
+      }
+    }
+  }
+  this.foundPotentials = true;
+};
 
+Sudoku.prototype.filterPotentialCluster = function(potential, el) {
+  var board = this.board;
+  var cluster = this.getCluster(el);
+  for (var i = 0; i < cluster.length; i++) {
+    var val = cluster[i].origin;
+    var idx = potential.indexOf(val);
+    if (idx !== -1) {
+      potential.splice(idx, 1);
+    }
+  }
+  return potential;
+};
+
+Sudoku.prototype.filterPotentialCol = function(potential, el, h) {
+  var col = this.getCol(h);
+  for (var i = 0; i < col.length; i++) {
+    var val = col[i].origin;
+    var idx = potential.indexOf(val);
+    if (idx !== -1)
+      potential.splice(idx, 1);
+    }
+  return potential;
+};
+
+Sudoku.prototype.filterPotentialRow = function(potential, el, v) {
+  var row = this.getRow(v);
+  for (var i = 0; i < row.length; i++) {
+    var val = row[i].origin;
+    var idx = potential.indexOf(val);
+    if (idx !== -1)
+      potential.splice(idx, 1);
+    }
+  return potential;
+};
 // end GET POTENTIALS
+
+// start ASCENDING
+Sudoku.prototype.ascendAll = function() {
+  if (!this.foundPotentials) {
+    this.getPotentials();
+  }
+  var board = this.board;
+  var canAscend = [];
+  var ascended;
+  for (var i = 0; i < board.length; i++) {
+    for(var j = 0; j < board.length; j++) {
+      var el = board[i][j];
+      if (el.potentials.length === 1) {
+        ascended = true
+        canAscend.push(el);
+      }
+    }
+  }
+  for (var i = 0; i < canAscend.length; i++) {
+    this.ascend(canAscend[i]);
+    console.log(i);
+  }
+  if (ascended) {
+    this.ascendAll();
+  }
+};
+
+Sudoku.prototype.ascend = function(obj) {
+  obj.origin = obj.potentials[0];
+  $(`span.v${obj.vertical}.h${obj.horizontal} p`).html(obj.origin);
+  this.updatePotentials(obj);
+};
+
+Sudoku.prototype.updatePotentials = function(obj) {
+  var board = this.board;
+  var row = this.getRow(obj.vertical);
+  var col = this.getCol(obj.horizontal);
+  var cluster = this.getCluster(obj);
+  var arr = cluster.concat(row, col);
+  for (var i = 0; i < arr.length; i++) {
+    var el = arr[i];
+    var idx = el.potentials.indexOf(obj.origin);
+    if (idx !== -1) {
+      el.potentials.splice(idx, 1);
+    }
+  }
+};
+// end ASCENDING
 
 // SUPPORTING FUNCTIONS
 Sudoku.prototype.getCorrectParentId = function(i, j) {
@@ -102,7 +201,7 @@ Sudoku.prototype.getCol = function(h) {
 Sudoku.prototype.getCluster = function(obj) {
   var board = this.board;
   var max = Math.sqrt(board.length);
-  var pos = headClusterPos(obj, max);
+  var pos = this.headClusterPos(obj, max);
   var cluster = [];
   for (var v = 0; v < max; v++) {
     for (var h = 0; h < max; h++) {
@@ -116,4 +215,4 @@ Sudoku.prototype.headClusterPos = function(obj, max) {
   var v = Math.floor(obj.vertical / max) * max;
   var h = Math.floor(obj.horizontal / max) * max;
   return [v, h];
-}
+};
