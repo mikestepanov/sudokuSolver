@@ -1,0 +1,9 @@
+#OSX Garbage
+.DS_Store
+
+#React Compiled
+bundle.js
+
+#SASS compiled
+.sass-cache
+styles.css.map
