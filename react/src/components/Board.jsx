@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import Board from './components/Board.jsx';
+import Cell from './Cell.jsx';
 
-class App extends React.Component {
+class Board extends React.Component {
   constructor(props) {
     super(props);
 
@@ -20,3 +19,5 @@ class App extends React.Component {
     );
   }
 }
+
+export default Board;
